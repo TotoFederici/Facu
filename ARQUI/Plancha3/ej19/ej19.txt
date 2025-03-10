@@ -1,0 +1,19 @@
+(a)
+Se imprime:
+
+Ejecutando foo2...
+0x80000000
+Ejecutando foo1...
+0x0
+0x0 0x80000000
+
+pues al ejecutar:
+
+printf("0x%x 0x%x\n ", foo1(), foo2());
+
+Se apilan las llamadas a foo1 y foo2 en ese orden
+Al desapilarlas, primero sale foo2 y luego foo1
+
+(b)
+Luego de ejecutar foo2, a = 0x80000000 y se enciende la bandera OF
+Luego de ejecutar foo1, a = 0x0, y se encienden las banderas OF y CF

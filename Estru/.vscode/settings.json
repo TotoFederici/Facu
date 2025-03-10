@@ -1,0 +1,21 @@
+{
+  "files.associations": {
+		"stdio.h": "c",
+		"stdlib.h": "c",
+		"slist.h": "c",
+		"glist.h": "c",
+		"enterosglist.h": "c",
+		"ctype.h": "c",
+		"string.h": "c",
+		"btree.h": "c",
+		"pila.h": "c",
+		"stack.h": "c",
+		"assert.h": "c",
+		"funcenteros.h": "c",
+		"pilas.h": "c",
+		"tablahash.h": "c",
+		"usuario.h": "c",
+		"avl.h": "c"
+	},
+  "editor.tabSize": 2
+}

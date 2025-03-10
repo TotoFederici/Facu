@@ -1,0 +1,9 @@
+bajan.txt
+crimen.txt
+fuerzanatural.txt
+lagoenelcielo.txt
+persianaamericana.txt
+Puente.txt
+Signos.txt
+temblor.txt
+teparatres.txt
