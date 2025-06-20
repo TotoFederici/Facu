@@ -12,7 +12,7 @@ instance Seq [] where
 
   nthS [] _ = error "Index muy grande"
   nthS (x:xs) 0 = x
-  nthS xs n | n < 0 = error "Index negativo"
+  nthS (x:xs) n | n < 0 = error "Index negativo"
             | otherwise = nthS xs (n-1)
 
   tabulateS f n = tabulateS' 0
@@ -36,7 +36,7 @@ instance Seq [] where
 
   showtS [] = EMPTY
   showtS [x] = ELT x
-  showtS xs = let p = 2 ^ ilg ((lengthS xs) - 1)
+  showtS xs = let p = (div (lengthS xs) 2)
                   (l,r) = (takeS xs p) ||| (dropS xs p)
               in NODE l r
             where ilg n = floor (logBase 2 (fromIntegral n))
@@ -53,5 +53,18 @@ instance Seq [] where
                                ELT a -> a
                                NODE l r -> f (reduceS f e l) (reduceS f e r)
 
-  scanS = undefined
+  scanS f b [] = ([b],b) 
+  scanS f b [x] = ([b],(f b x))
+  scanS f b s = let s' = contraer s
+                    (s'', a) = scanS f b s'
+                    s''' = expandir s s''
+                in (s''', a)
+              where contraer [] = []
+                    contraer [x] = [x]
+                    contraer (x:y:xs) = let (op, xs') = ((f x y) ||| contraer xs)
+                                        in op : xs'
+                    expandir s1 s2 = tabulateS (\i -> if (even i) 
+                                                      then nthS s2 (div i 2)
+                                                      else f (nthS s2 (div i 2)) (nthS s1 (i-1))) (lengthS s1)                  
+
   fromList s = s
