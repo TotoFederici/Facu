@@ -16,14 +16,17 @@ pthread_t barber;
 
 void cortando(){
     printf("Te estoy cortando\n");
+    sleep(1);
     sem_post(&corte);
 }
 void me_cortan(){
     sem_wait(&corte);
     printf("Me estan cortando\n");
+    sleep(1);
 }
 void pagando(){
     printf("Te estoy pagando\n");
+    sleep(1);
     sem_post(&pago);
 }
 void me_pagan(){
@@ -38,6 +41,7 @@ void* barbero(void* p){
         sem_post(&asientos);
         cortando();
         me_pagan();
+        sleep(3);
     }
     return NULL;
 }

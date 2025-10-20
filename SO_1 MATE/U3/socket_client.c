@@ -21,7 +21,7 @@ int main(){
   client_name.sun_family = AF_UNIX;
   strcpy (client_name.sun_path,"SRV_NAME");
 
-  socklen_t srv_size = sizeof(srv_name);  
+  srv_size = sizeof(srv_name);  
   
   unlink(client_name.sun_path);
 

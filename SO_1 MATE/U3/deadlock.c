@@ -15,7 +15,7 @@ pthread_mutex_t mutex2 =PTHREAD_MUTEX_INITIALIZER;
 void* threadA (void* arg){
   pthread_mutex_lock(&mutex1);
 
-  sleep(1);
+  sleep(0.5);
 
   pthread_mutex_lock(&mutex2);
 
@@ -32,7 +32,7 @@ void* threadB (void* arg){
 
   pthread_mutex_lock(&mutex2);
 
-  sleep(1);
+  sleep(0.5);
 
   pthread_mutex_lock(&mutex1);
 

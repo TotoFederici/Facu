@@ -67,3 +67,19 @@ testsArray =
 
 main :: IO Counts
 main = runTestTT $ TestList testsArray
+
+fview :: String -> String -> String
+fview s0 s1 = "(" ++ s0 ++ "+" ++ s1 ++ ")"
+
+longestStreak :: Float -> Arr Float -> Int
+longestStreak v s = let s' = mapS (\n -> if n > v then (n,1,n) else (n,0,n)) s
+                        (s'',r) = scanS combine (0,0,0) s'
+                        s''' = appendS s'' (singletonS r)
+                        res = mapS (\(_,i,_) -> i) s'''
+                    in reduceS max 0 res
+  where combine (l,i,r) (l',i',r') = if (r > v) && (l' > v)
+                                     then (l,i+i',r')
+                                     else (l,i',r')
+
+s4 :: Arr Float
+s4 = fromList [31,31,31,31,31,31,31]

@@ -16,7 +16,7 @@ void INThandler(int sig)
 {
   char c;
   signal(SIGINT,SIG_DFL);
-  printf("OUCH, did you hit Ctrl-C?\n"
+  printf("\nOUCH, did you hit Ctrl-C?\n"
   "Do you really want to quit? [y/n] ");
   c = getchar();
   if (c == 'y' || c == 'Y') exit(0);

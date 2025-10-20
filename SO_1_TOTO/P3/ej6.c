@@ -33,7 +33,7 @@ void* pusher1(){
             sem_post(&papelSem);
         }
         else{
-            isTabaco = 1; 
+            isTabaco = 1;
         }
         pthread_mutex_unlock(&tutu);
     }

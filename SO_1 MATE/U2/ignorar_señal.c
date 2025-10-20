@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 
 void handler(int signum){
@@ -12,11 +13,9 @@ void handler(int signum){
 int main(){
   void (*signalreturn)(int);
 
-  signalreturn=signal(SIGTSTP,SIG_IGN);
+  signalreturn=signal(SIGINT,SIG_IGN);
 
-  raise(SIGTSTP);
-
-  printf("Ignorada\n");
+  sleep(10);
 
   return 0;
 }
