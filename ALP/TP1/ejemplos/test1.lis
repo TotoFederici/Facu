@@ -1,0 +1,10 @@
+n = 5;
+case {
+n == 0 : {x = 10}
+n == 1 : {x = 11}
+n == 2 : {x = 12}
+n == 3 : {x = 13}
+n == 4 : {x = 14}
+n == 5 : {x = n++;if x > 0 {skip} else {repeat {skip} until false}}
+};
+h = 4

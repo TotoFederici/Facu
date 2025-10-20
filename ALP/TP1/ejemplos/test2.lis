@@ -1,0 +1,3 @@
+n = 0;
+case {n == 0 : {case {n == 0 : {case {n == 0 : {skip}}}}}};
+n = 1
