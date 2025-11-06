@@ -38,8 +38,8 @@ doubleNat = double @Int
 doubleFun :: ((Int -> Int) -> Int -> Int) -> (Int -> Int) -> Int -> Int
 doubleFun = double @(Int -> Int)
 
-id :: forall x . x -> x
-id = \x -> x
+id2 :: forall x . x -> x
+id2 = \x -> x
 
 quadruple :: forall x . (x -> x) -> x -> x
 quadruple = \f -> \x -> double f (double f x)
