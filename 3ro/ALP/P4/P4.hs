@@ -137,7 +137,7 @@ pred' = \n:Nat.n <PairNat> (\p:PairNat.pairNat (sndNat p) n) (pairNat zero zero)
 -- Definiciones magicas --
 
 checkNat :: Nat -> Int
-checkNat n = n (+1) 0
+checkNat n = runNat n (+1) 0
 
 toNat :: Int -> Nat
 toNat n | n == 0 = zero
@@ -147,17 +147,15 @@ toNat n | n == 0 = zero
 
 -- Tipo y constructores --
 
-type Nat = forall x . (x -> x) -> x -> x
+newtype Nat = Nat { runNat :: forall x. (x -> x) -> x -> x }
 
 zero :: Nat
-zero = \s z -> z
+zero = Nat (\s z -> z)
 
 suc :: Nat -> Nat
-suc = \n -> \s z -> s (n s z)
+suc = \n -> Nat (\s z -> s (runNat n s z)) 
 
 -- Fin de tipo y constructores --
-
-type PairNatRep = forall x . (Nat -> Nat -> x) -> x
 
 -- Truquito para poder hacer pred --
 newtype PairNat = PairNat { runPairNat :: forall x. (Nat -> Nat -> x) -> x }
@@ -174,8 +172,98 @@ sndNat :: PairNat -> Nat
 sndNat = \p -> runPairNat p (\n m -> m)
 -- Fin de .... eso --
 
+cSuma :: Nat -> Nat -> Nat
+cSuma = \n m -> runNat n (\x -> suc x) m
+
 cPred :: Nat -> Nat
 cPred = \n -> fstNat (cPred' n)
 
 cPred' :: Nat -> PairNat
-cPred' = \n -> n (\p -> pairNat (sndNat p) (suc (sndNat p))) (pairNat zero zero)
+cPred' = \n -> runNat n (\p -> pairNat (sndNat p) (suc (sndNat p))) (pairNat zero zero)
+
+-- EJ 14 --
+
+-- Sistema F --
+
+{- 
+Tipo de listas de church: 
+
+List X = forall R. (X -> R -> R) -> R -> R
+
+Constructores de listas:
+
+nil : forall X. List X
+nil = /\X./\R.\c:X -> R -> R.\n:R.n
+
+cons : forall X. X -> List X -> List X
+cons = /\X.\x:X.\xs:List X. /\R.\c:X -> R -> R.\n:R. c x (xs <R> c n)
+
+map : forall X. forall Y. (X -> Y) -> List X -> List Y
+map = /\X./\Y.\f:X -> Y.\xs:List X. xs <List Y> (\x:X.\ys. cons (f x) ys) (nil <Y>)
+-}
+
+-- Haskell --
+
+-- Visualizer
+checkList :: CList x -> [x]
+checkList xs = runCList xs (:) []
+
+cToList :: [x] -> CList x
+cToList = foldr (cCons) cNil
+
+-- Tipo de lista de church
+newtype CList x = CList { runCList :: forall y. (x -> y -> y) -> y -> y }
+
+-- Constructores
+cNil :: forall x. CList x
+cNil = CList (\c n -> n)
+
+cCons :: forall x. x -> CList x -> CList x
+cCons = \x xs -> CList (\c n -> c x (runCList xs c n))
+
+
+-- map, append y reverse
+cMap :: forall x. forall y. (x -> y) -> CList x -> CList y
+cMap = \f xs -> runCList xs (\y ys -> cCons (f y) ys) cNil
+
+cAppend :: forall x. CList x -> CList x -> CList x
+cAppend = \xs ys -> runCList xs (\x xss -> cCons x xss) ys
+
+cReverse :: forall x. CList x -> CList x
+cReverse = \xs -> runCList xs (\x ys -> cAppend ys (cCons x cNil)) cNil
+
+-- SumList
+cSumaList :: CList Nat -> Nat
+cSumaList = \ns -> runCList ns (\n m -> cSuma n m) zero
+
+-- Seccion c (La pasé mal)
+
+-- Pair general
+newtype Pair x y = Pair { runPair :: forall z. (x -> y -> z) -> z }
+
+checkPair :: Pair x y -> (x,y)
+checkPair = \p -> (fstPair p, sndPair p)
+
+pair :: forall x. forall y. x -> y -> Pair x y
+pair = \x y -> Pair (\f -> f x y)
+
+fstPair :: forall x. forall y. Pair x y -> x
+fstPair = \p -> runPair p (\x y -> x)
+
+sndPair :: forall x. forall y. Pair x y -> y
+sndPair = \p -> runPair p (\x y -> y)
+
+-- Paramorfismo
+param :: forall x. forall y. (x -> Pair y (CList x) -> Pair y (CList x)) -> Pair y (CList x) -> CList x -> Pair y (CList x)
+param = \c n xs -> runCList xs (\x p -> pair (fstPair (c x p)) (cCons x (sndPair p))) 
+                               (pair (fstPair n) (cNil))
+
+insert :: forall x. (x -> x -> CBool) -> CList x -> x -> CList x
+insert = \c xs x -> fstPair (param (\y p -> (c x y) 
+                                              (pair (cCons x (cCons y (sndPair p))) (cCons y (sndPair p))) 
+                                              (pair (cCons y (fstPair p)) (cCons y (fstPair p))))
+                                   (pair (cCons x cNil) cNil) xs)
+
+-- Funcion para testear el insert
+comp :: forall x. (x -> x -> Bool) -> x -> x -> CBool
+comp = \c x y -> if (c x y) then cTrue else cFalse
