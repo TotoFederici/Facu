@@ -49,19 +49,21 @@ quadruple = \f -> \x -> double f (double f x)
 -- Sistema F --
 
 {- 
-Definicion de Bool, True y False.
+--------------Definicion de Bool, True y False--------------
 
-Tipo Bool de Church:
+-------Tipo Bool de Church-------
+
 Bool = forall X.X -> X -> X
 
-Constructores True y False:
+-------Constructores True y False-------
+
 True : Bool
 True = /\X.\t:X.\f.X.t
 
 False : Bool
 False = /\X.\t:X.\f.X.f
 
-Definicoin de And:
+--------------Definicoin de And--------------
 
 And : Bool -> Bool -> Bool
 And = \p:Bool.\q:Bool.p <Bool> q False
@@ -98,33 +100,40 @@ cAnd = \p q -> p q cFalse
 -- Sistema F --
 
 {- 
-Tipo Nat de Church:
+--------------Definicion de tipo, constructores de Nat--------------
+
+-------Tipo Nat de Church-------
+
 Nat = forall X.(X -> X) -> X -> X
 
-Constructores de Nat:
+-------Constructores de Nat-------
+
 Zero : Nat
 Zero = /\X.\s:X -> X.\z:X.z
 
 Succ : Nat -> Nat
 Succ = \n:Nat./\X.\s:X -> X.\z:X.s (n <X> s z)
 
-Definicion de tipo, constructor y destructores de PairNat
+--------------Definicion de suma--------------
 
-Tipo PairNat:
+suma : Nat -> Nat -> Nat
+suma = \n:Nat.\m:Nat. n <Nat> (\x:Nat. Succ x) m
+
+--------------Definicion de tipo, constructor y destructores de PairNat--------------
+
 PairNat = forall X.(Nat -> Nat -> X) -> X
 
-Constructor pairNat:
 pairNat : Nat -> Nat -> PairNat
 pairNat = \n:Nat.\m:Nat./\X.\f:Nat -> Nat -> Nat.f n m
 
-Destructores fst y snd:
 fstNat : PairNat -> Nat
 fstNat = \p:PairNat.P <Nat> (\x:Nat.\y:Nat.x)
 
 sndNat : PairNat -> Nat
 sndNat = \p:PairNat.P <Nat> (\x:Nat.\y:Nat.y)
 
-Definicion de pred y pred' usando tupling:
+--------------Definicion de pred y pred' usando tupling--------------
+
 pred : Nat -> Nat
 pred = \n:Nat.fstNat (pred' n)
 
@@ -186,11 +195,13 @@ cPred' = \n -> runNat n (\p -> pairNat (sndNat p) (suc (sndNat p))) (pairNat zer
 -- Sistema F --
 
 {- 
-Tipo de listas de church: 
+--------------Definicion de tipo, constructores de Listas--------------
+
+-------Tipo de listas de church-------
 
 List X = forall R. (X -> R -> R) -> R -> R
 
-Constructores de listas:
+-------Constructores de listas-------
 
 nil : forall X. List X
 nil = /\X./\R.\c:X -> R -> R.\n:R.n
@@ -198,8 +209,47 @@ nil = /\X./\R.\c:X -> R -> R.\n:R.n
 cons : forall X. X -> List X -> List X
 cons = /\X.\x:X.\xs:List X. /\R.\c:X -> R -> R.\n:R. c x (xs <R> c n)
 
+--------------map, append, reverse y sumlist--------------
+
 map : forall X. forall Y. (X -> Y) -> List X -> List Y
 map = /\X./\Y.\f:X -> Y.\xs:List X. xs <List Y> (\x:X.\ys. cons (f x) ys) (nil <Y>)
+
+append : forall X. ListX -> List X -> List X
+append = /\X.\xs:List X.\ys:List X. xs <List X> (\x:X.\xss:List X. cons <X> x xss) ys
+
+reverse : forall X. List X -> List X
+reverse = /\X.\xs:List X. append <X> ys (cons <X> x (nil <X>)) (nil <X>)
+
+sumlist : List Nat -> Nat
+sumList = \ns:List Nat. ns <Nat> (\x:Nat.\m:Nat. suma n m)
+
+--------------Definicion de pares generales (tipo, constructor y destructores)--------------
+
+Pair X Y = forall z. (X -> Y -> Z) -> Z
+
+pair :: forall X. forall Y. X -> Y -> Pair X Y
+pair = /\X./\Y.\x:X.\y:Y. /\Z.\f:X -> Y -> Z. f x y
+
+fstPair :: forall X. forall Y. Pair X Y -> X
+fstPair = /\X./\Y.\p:Pair X Y. p <X> (\x:X.\y:Y. x)
+
+sndPair :: forall X. forall Y. Pair X Y -> Y
+sndPair = /\X./\Y.\p:Pair X Y. p <Y> (\x:X.\y:Y. y)
+
+--------------Paramorfismo e insert--------------
+
+param : forall X. forall Y. (X -> Pair Y (List X) -> Pair Y (List X)) -> Pair Y (List X) -> List X -> Pair Y (List X)
+param = /\X./\Y.\c:X -> Pair Y (List X) -> Pair Y (List X).\n:Pair Y (List X).\xs:List X.
+        xs <Pair Y (List X)>
+        (\x:X.\p:Pair Y (List X). pair <Y> <List X> (fstPair <Y> <List X> (c x p)) (cons <X> x (sndPair <Y> <List X> p)))
+        (pair <Y> <List X> (fstPair <Y> <List X> n) (nil <X>)
+        
+insert : forall X.(X -> X -> Bool) -> List X -> X -> List X
+insert = /\X.\c:X -> X -> Bool.\xs:List X.\x:X. 
+         fstPair <List X> <List X> (Param <X> <List X>
+         (\y:X.\p:Pair (List X) (List X). (c x y) (pair <List X> <List X> (cons <X> x (cons <X> y (sndPair <List X> <List X> p))) (cons <X> y (sndPair <List X> <List X> p)))
+                                                  (pair <List X> <List X> (cons <X> y (sndPair <List X> <List X> p)) (cons <X> y (sndPair <List X> <List X> p)))))
+         (pair <List X> <List X> (cons <X> x nil <X>) nil <X>) xs
 -}
 
 -- Haskell --
@@ -233,8 +283,8 @@ cReverse :: forall x. CList x -> CList x
 cReverse = \xs -> runCList xs (\x ys -> cAppend ys (cCons x cNil)) cNil
 
 -- SumList
-cSumaList :: CList Nat -> Nat
-cSumaList = \ns -> runCList ns (\n m -> cSuma n m) zero
+cSumList :: CList Nat -> Nat
+cSumList = \ns -> runCList ns (\n m -> cSuma n m) zero
 
 -- Seccion c (La pasé mal)
 
