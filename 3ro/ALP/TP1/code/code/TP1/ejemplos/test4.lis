@@ -1,0 +1,4 @@
+n = 10;
+g = 15;
+h = 0;
+if n == 5 {h = h+1} else {repeat {g = h++} until h == 5}

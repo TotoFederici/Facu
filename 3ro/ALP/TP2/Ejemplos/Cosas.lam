@@ -1,0 +1,54 @@
+{- Constantes -}
+
+def Uno = suc 0
+def Dos = suc Uno
+def Tres = suc Dos
+def Cuatro = suc Tres
+def Cinco = suc Cuatro
+
+def l = cons 0 (cons Uno (cons Dos (cons Tres (cons Cuatro (cons Cinco nil)))))
+def m = cons Cinco (cons Cuatro (cons Tres (cons Dos (cons Uno (cons 0 nil)))))
+def o = cons 0 (cons 0 (cons 0 (cons 0 nil)))
+def p = cons Tres (cons Uno (cons Cuatro (cons Cinco (cons Uno (cons 0 nil)))))
+
+{- Operaciones con Naturales -} 
+
+def suma = \n:Nat.\m:Nat. R m (\r:Nat.\p:Nat. suc r) n
+
+def mult = \n:Nat.\m:Nat. let f = suma n in R 0 (\r:Nat.\p:Nat. f r) m 
+
+def pred = \n:Nat. R 0 (\r:Nat.\p:Nat.p) n
+
+def resta = \n:Nat.\m:Nat. R n (\r:Nat.\p:Nat. pred r) m
+
+{- Listas -}
+
+def append = \ns:List Nat.\ms:List Nat. RL ms (\k:Nat.\ks:List Nat.\rs:List Nat. cons k rs) ns
+
+def reverse = \ls:List Nat. RL nil (\n:Nat.\ns:List Nat.\rs:List Nat. append rs (cons n nil)) ls
+
+def appendTres = \ls:List Nat.\rs:List Nat.\ks:List Nat. let h = append ls in
+							 let g = append rs in
+							 (h (g ks))
+
+{- Bool (definidos con Natuares) -}
+
+def true = \p:Nat.\q:Nat.p
+def false = \p:Nat.\q:Nat.q
+
+def isZero = \n:Nat. R true (\r:Nat -> Nat -> Nat.\p:Nat. false) n
+
+def not = \p:(Nat -> Nat -> Nat). let pz = p Uno 0 in isZero pz
+
+def and = \p:(Nat -> Nat -> Nat).\q:(Nat -> Nat -> Nat). let pz = p 0 Uno in
+							 let qz = q 0 Uno in
+							 isZero (suma pz qz)
+
+def or = \p:(Nat -> Nat -> Nat).\q:(Nat -> Nat -> Nat). let pz = p Uno 0 in
+							 let qz = q Uno 0 in
+							 not (isZero (suma pz qz))
+
+
+def eq = \n:Nat. R isZero (\f:Nat -> (Nat -> Nat -> Nat).\q:Nat. \m:Nat. R false (\r:Nat -> Nat -> Nat.\p:Nat. f p) m) n
+
+def inList = \n:Nat.\ns:List Nat. RL false (\k:Nat.\ks:List Nat.\r:(Nat -> Nat -> Nat). or r (eq k n)) ns

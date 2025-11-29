@@ -1,0 +1,10 @@
+def suma = \n:Nat.\m:Nat. R n (\e:Nat. \p:Nat. suc e) m 
+def sumUno = \l:List Nat. RL nil (\n:Nat.\ln:List Nat.\lr:List Nat. cons (suma n (suc 0)) lr) l
+
+def sumPos = \l:List Nat. RL nil (\n:Nat.\c:List Nat.\ln: List Nat. sumUno (cons n ln)) l 
+
+{-Ejemplos para probar sumPos-}
+def Z = cons 0 (cons 0 (cons 0 (cons 0 (cons 0 (cons 0 (cons 0 nil))))))
+def L = cons 0 (cons (suc 0) (cons (suc (suc 0)) nil))
+def M = cons (suc (suc 0)) (cons 0 nil)
+def N = nil

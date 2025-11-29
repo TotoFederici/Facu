@@ -1,0 +1,17 @@
+def I = \x:E. x
+def K = \x:E.\y:E.y
+def S = \x:E->E->E.\y:E->E.\z:E.(x z) (y z)
+
+def suma = \n:Nat.\m:Nat. R n (\e:Nat. \p:Nat. suc e) m 
+def SUC = \n:Nat. suc n
+def ACK = \n:Nat.(R (SUC) (\f:(Nat -> Nat).\j:Nat. (\m:Nat. R (f (suc 0)) (\r:Nat.\p:Nat.(f r)) m)) n)
+
+{- LENgua :P -}
+def len = \l:List Nat. RL 0 (\n:Nat.\c:List Nat.\m:Nat. suc m) l 
+
+def ackList = \n:Nat.\m:Nat. let a = (ACK n m) in (R nil (\l:List Nat.\r:Nat.cons r l) a) 
+
+def sumaTres = \n:Nat.\m:Nat.\k:Nat. let h = suma n in
+                                     let g = suma m in
+                                     (h (g k))
+def TRES = suc (suc (suc 0))
