@@ -131,30 +131,13 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
                 frontier.push((successor[0], path + [successor[1]]))
                     
     return None
+    
+    util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
-    frontier = PriorityQueue()
-    frontier.push((problem.getStartState(), [], 0), 0)
-    visited = set()
-
-    while (not frontier.isEmpty()):
-        currentState, path, cost = frontier.pop()
-        """ currentState ,path = pop
-        cost = pop[1] """
-
-        if (problem.isGoalState(currentState)):
-            return path
-
-        if (currentState not in visited):
-            visited.add(currentState)
-
-            for successor in problem.getSuccessors(currentState):
-                if successor[0] not in visited:
-                    newCost = cost + successor[2]
-                    frontier.push((successor[0], path + [successor[1]], newCost), newCost)
-                    
-    return None
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None) -> float:
     """
@@ -165,28 +148,8 @@ def nullHeuristic(state, problem=None) -> float:
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    frontier = PriorityQueueWithFunction(lambda x : x[2] + heuristic(x[0], problem))
-    frontier.push((problem.getStartState(), [], 0))
-    visited = set()
-
-    while (not frontier.isEmpty()):
-        currentState, path, cost = frontier.pop()
-        """ currentState ,path = pop
-        cost = pop[1] """
-
-        if (problem.isGoalState(currentState)):
-            return path
-
-        if (currentState not in visited):
-            visited.add(currentState)
-
-            for successor in problem.getSuccessors(currentState):
-                if successor[0] not in visited:
-                    newCost = cost + successor[2]
-                    frontier.push((successor[0], path + [successor[1]], newCost))
-                    
-    return None
-
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
 
 # Abbreviations
 bfs = breadthFirstSearch
