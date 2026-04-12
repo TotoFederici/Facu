@@ -295,15 +295,21 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        startPosition = self.startingPosition
+        visitedCorners = [False, False, False, False]
+        
+        if startPosition in self.corners:
+            cornerIndex = self.corners.index(startPosition)
+            visitedCorners[cornerIndex] = True
+
+        return (startPosition, tuple(visitedCorners))
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        pos, visitedCorners = state
+        return all(visitedCorners)
 
     def getSuccessors(self, state: Any):
         """
@@ -315,17 +321,22 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
+        pos, visitedCorners = state
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+            x,y = pos
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            if not hitsWall:
+                nextPosition = (nextx, nexty)
+                newVisitedCorners = list(visitedCorners)
+                if nextPosition in self.corners and nextPosition not in newVisitedCorners:
+                    newVisitedCorners[self.corners.index(nextPosition)] = True
+                
+                nextState = (nextPosition, tuple(newVisitedCorners))
+                successors.append((nextState, action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -345,6 +356,26 @@ class CornersProblem(search.SearchProblem):
 
 
 
+def getPermutations(elements: list):
+
+    if len(elements) == 0:
+        return [()]
+    if len(elements) == 1:
+        return [(elements[0],)]
+
+    allPermutations = []
+    
+    for i in range(len(elements)):
+        currentElement = elements[i]
+        rest = elements[:i] + elements[i+1:]
+        
+        for p in getPermutations(rest):
+            newPermutation = (currentElement,) + p
+            allPermutations.append(newPermutation)
+
+    return allPermutations
+
+
 def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -359,11 +390,34 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     admissible.
     """
     corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    pos, visitedCorners = state
+    notVisitedcorners = []
 
+    for i in range(len(visitedCorners)):
+        if not visitedCorners[i]:
+            notVisitedcorners.append(corners[i])
+
+    if len(notVisitedcorners) == 0:
+        return 0
+
+    posiblePaths = getPermutations(notVisitedcorners)
+    
+    heur = 999999 
+
+    for path in posiblePaths:
+        currentState = pos
+        pathCost = 0
+        
+        for corner in path:
+            stepCost = abs(currentState[0] - corner[0]) + abs(currentState[1] - corner[1])
+            pathCost += stepCost
+            currentState = corner
+
+        if pathCost < heur:
+            heur = pathCost
+
+    return heur
 
 
 class AStarCornersAgent(SearchAgent):

@@ -104,9 +104,9 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
         if (currentState not in visited):
             visited.add(currentState)
 
-        for successor in problem.getSuccessors(currentState):
-            if successor[0] not in visited:
-                frontier.push((successor[0], path + [successor[1]]))
+            for successor in problem.getSuccessors(currentState):
+                if successor[0] not in visited:
+                    frontier.push((successor[0], path + [successor[1]]))
                     
     return None
 
@@ -126,9 +126,9 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
         if (currentState not in visited):
             visited.add(currentState)
 
-        for successor in problem.getSuccessors(currentState):
-            if successor[0] not in visited:
-                frontier.push((successor[0], path + [successor[1]]))
+            for successor in problem.getSuccessors(currentState):
+                if successor[0] not in visited:
+                    frontier.push((successor[0], path + [successor[1]]))
                     
     return None
 
