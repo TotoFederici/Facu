@@ -452,14 +452,17 @@ class FoodSearchProblem:
         "Returns successor states, the actions they require, and a cost of 1."
         successors = []
         self._expanded += 1 # DO NOT CHANGE
+        #print("pos Actual", state[0])
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x,y = state[0]
             dx, dy = Actions.directionToVector(direction)
             nextx, nexty = int(x + dx), int(y + dy)
+
             if not self.walls[nextx][nexty]:
                 nextFood = state[1].copy()
                 nextFood[nextx][nexty] = False
                 successors.append( ( ((nextx, nexty), nextFood), direction, 1) )
+        #print("sucesores: ", successors)
         return successors
 
     def getCostOfActions(self, actions):
@@ -506,8 +509,14 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    pills = foodGrid.asList()
+    distances = list(map(lambda x : abs(position[0] - x[0]) + abs(position[1] - x[1]), pills))
+    if len(distances) == 0:
+        return 0
+    maxDistance = max(distances)
+    minDistance = min(distances)
+    #print("heur", maxDistance + len(pills))
+    return maxDistance + len(pills)
 
 
 class ClosestDotSearchAgent(SearchAgent):

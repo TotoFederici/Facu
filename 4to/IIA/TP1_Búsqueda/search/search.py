@@ -171,8 +171,6 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
 
     while (not frontier.isEmpty()):
         currentState, path, cost = frontier.pop()
-        """ currentState ,path = pop
-        cost = pop[1] """
 
         if (problem.isGoalState(currentState)):
             return path
