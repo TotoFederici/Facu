@@ -401,6 +401,9 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     if len(notVisitedcorners) == 0:
         return 0
 
+    def manhattan(p1, p2):
+        return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
     posiblePaths = getPermutations(notVisitedcorners)
     
     heur = 999999 
@@ -410,7 +413,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
         pathCost = 0
         
         for corner in path:
-            stepCost = abs(currentState[0] - corner[0]) + abs(currentState[1] - corner[1])
+            stepCost = manhattan(currentState, corner)
             pathCost += stepCost
             currentState = corner
 
@@ -452,7 +455,7 @@ class FoodSearchProblem:
         "Returns successor states, the actions they require, and a cost of 1."
         successors = []
         self._expanded += 1 # DO NOT CHANGE
-        #print("pos Actual", state[0])
+        print("pos Actual", state[0])
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x,y = state[0]
             dx, dy = Actions.directionToVector(direction)
@@ -461,8 +464,7 @@ class FoodSearchProblem:
             if not self.walls[nextx][nexty]:
                 nextFood = state[1].copy()
                 nextFood[nextx][nexty] = False
-                successors.append( ( ((nextx, nexty), nextFood), direction, 1) )
-        #print("sucesores: ", successors)
+                successors.append((((nextx, nexty), nextFood), direction, 1))
         return successors
 
     def getCostOfActions(self, actions):
@@ -510,13 +512,42 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     pills = foodGrid.asList()
-    distances = list(map(lambda x : abs(position[0] - x[0]) + abs(position[1] - x[1]), pills))
-    if len(distances) == 0:
+
+    if not pills:
+        print("sucessor:", position ," With heur: ", 0)
         return 0
-    maxDistance = max(distances)
-    minDistance = min(distances)
-    #print("heur", maxDistance + len(pills))
-    return maxDistance + len(pills)
+
+    def manhattan(p1, p2):
+        return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
+    if len(pills) == 1:
+        print("sucessor:", position ," With heur: ", manhattan(position, pills[0]))
+        return manhattan(position, pills[0])
+
+    fardestPair = -1
+    f1, f2 = pills[0], pills[0]
+    
+    for i in range(len(pills)):
+        for j in range(i + 1, len(pills)):
+            dist = manhattan(pills[i], pills[j])
+            if dist > fardestPair:
+                fardestPair = dist
+                f1 = pills[i]
+                f2 = pills[j]
+                
+    distTof1 = manhattan(position, f1)
+    distTof2 = manhattan(position, f2)
+    minDist = min(distTof1, distTof2)
+
+    print("sucessor:", position ," With heur: ", fardestPair + minDist)
+    return fardestPair + minDist
+
+    #distances = list(map(lambda x : abs(position[0] - x[0]) + abs(position[1] - x[1]), pills))
+    #if len(distances) == 0:
+    #    return 0
+    #maxDistance = max(distances)
+    #minDistance = min(distances)
+    #return maxDistance
 
 
 class ClosestDotSearchAgent(SearchAgent):
