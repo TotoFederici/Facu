@@ -167,7 +167,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
     """Search the node that has the lowest combined cost and heuristic first."""
     frontier = PriorityQueueWithFunction(lambda x : x[2] + heuristic(x[0], problem))
     frontier.push((problem.getStartState(), [], 0))
-    visited = set()
+    visited = {}
 
     while (not frontier.isEmpty()):
         currentState, path, cost = frontier.pop()
@@ -175,8 +175,8 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
         if (problem.isGoalState(currentState)):
             return path
 
-        if (currentState not in visited):
-            visited.add(currentState)
+        if (currentState not in visited.keys() or visited[currentState] > cost):
+            visited[currentState] = cost
 
             for successor in problem.getSuccessors(currentState):
                 if successor[0] not in visited:
