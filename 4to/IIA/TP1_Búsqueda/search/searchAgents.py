@@ -455,7 +455,6 @@ class FoodSearchProblem:
         "Returns successor states, the actions they require, and a cost of 1."
         successors = []
         self._expanded += 1 # DO NOT CHANGE
-        print("pos Actual", state[0])
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x,y = state[0]
             dx, dy = Actions.directionToVector(direction)
@@ -514,14 +513,12 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     pills = foodGrid.asList()
 
     if not pills:
-        print("sucessor:", position ," With heur: ", 0)
         return 0
 
     def manhattan(p1, p2):
         return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
 
     if len(pills) == 1:
-        print("sucessor:", position ," With heur: ", manhattan(position, pills[0]))
         return manhattan(position, pills[0])
 
     fardestPair = -1
@@ -539,16 +536,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     distTof2 = manhattan(position, f2)
     minDist = min(distTof1, distTof2)
 
-    print("sucessor:", position ," With heur: ", fardestPair + minDist)
     return fardestPair + minDist
-
-    #distances = list(map(lambda x : abs(position[0] - x[0]) + abs(position[1] - x[1]), pills))
-    #if len(distances) == 0:
-    #    return 0
-    #maxDistance = max(distances)
-    #minDistance = min(distances)
-    #return maxDistance
-
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
