@@ -61,7 +61,7 @@ instance Seq Arr where
                                               then nthS a (l-1)
                                               else (f (nthS a (2*i)) (nthS a (2*i+1)))) mid
           expandir a1 a2 l = tabulateS (\i -> if (even i) 
-                                          then nthS a2 (div i 2)
-                                          else f (nthS a2 (div i 2)) (nthS a1 (i-1))) l                
+                                              then nthS a2 (div i 2)
+                                              else f (nthS a2 (div i 2)) (nthS a1 (i-1))) l                
 
   fromList   = A.fromList

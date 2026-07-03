@@ -1,0 +1,5 @@
+Ejericio 1:
+
+A primera vista, los resultados obtenidos parecen ser bastante peores que los arboles de desición (cosa que creiamos que no pasaria), lo que está pasando es que, al tener solo una capa oculta, la red está intentando trazar hiper-planos (rectas en 2D en este caso) para seguir la forma de las espirales, el problema con esto es que una función con tal curvatura como son las espirales son muy dificiles de aproximar con rectas, incluso cuando usamos 40 neuronas en la capa oculta, la aproximación no alcanza a dar una vuelta completa, si hubiera una segunda capa oculta, la red seria capaz de 'curvar' estos hiper-planos para darles la forma que tienen las espirales. En relación al nombre de la sección, 'Capacidad de modelado', vemos que aumentar la cantidad de neuronas en la capa oculta, mejora la capacidad de la red de modelar espirales, pero no tanto como lo harian 2 capas.
+
+Ejericio 2:
